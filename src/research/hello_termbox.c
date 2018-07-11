@@ -9,18 +9,12 @@
  * foreground color, once with only the background color, and once with both).
  */
 
+#include <stdlib.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #include "termbox.h"
-
-const uint16_t RAINBOW[] = {
-    TB_RED,
-    TB_YELLOW,
-    TB_GREEN,
-    TB_CYAN,
-    TB_BLUE,
-    TB_MAGENTA
-};
+#include "hello_termbox.h"
 
 int main(void) {
     // Initialize the screen.
@@ -36,7 +30,7 @@ int main(void) {
     write_rainbow_bg(0, 1, "Hello, World!");
 
     // Write "Hello, World" with rainbow foreground and background.
-    write_rainbow_bg(0, 2, "Hello, World!");
+    write_rainbow_fg_bg(0, 2, "Hello, World!");
 
     // Show the changes.
     tb_present();
@@ -47,25 +41,25 @@ int main(void) {
 }
 
 /**
- * @brief Writes a message with rainbow fg (white bg) at the given position.
+ * @brief Writes a message with rainbow fg (black bg) at the given position.
  */
 void write_rainbow_fg(int x, int y, char *msg) {
     for(int i = 0; msg[i] != NULL; i++) {
         uint32_t ch = (uint32_t) msg[i];
         uint16_t fg = RAINBOW[i % 6];
-        uint16_t bg = TB_WHITE;
+        uint16_t bg = TB_BLACK;
 
         tb_change_cell(x + i, y, ch, fg, bg);
     }
 }
 
 /**
- * @brief Writes a message with rainbow bg (white fg) at the given position.
+ * @brief Writes a message with rainbow bg (black fg) at the given position.
  */
 void write_rainbow_bg(int x, int y, char *msg) {
     for(int i = 0; msg[i] != NULL; i++) {
         uint32_t ch = (uint32_t) msg[i];
-        uint16_t fg = TB_WHITE;
+        uint16_t fg = TB_BLACK;
         uint16_t bg = RAINBOW[i % 6];
 
         tb_change_cell(x + i, y, ch, fg, bg);
@@ -75,11 +69,11 @@ void write_rainbow_bg(int x, int y, char *msg) {
 /**
  * @brief Writes a message with rainbow fg and bg at the given position.
  */
-void write_rainbow_bg_fb(int x, int y, char *msg) {
+void write_rainbow_fg_bg(int x, int y, char *msg) {
     for(int i = 0; msg[i] != NULL; i++) {
         uint32_t ch = (uint32_t) msg[i];
         uint16_t fg = RAINBOW[i % 6];
-        uint16_t bg = RAINBOW[(i - 1) % 6];
+        uint16_t bg = RAINBOW[5 - i % 6];
 
         tb_change_cell(x + i, y, ch, fg, bg);
     }
